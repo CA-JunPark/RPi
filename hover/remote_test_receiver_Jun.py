@@ -42,7 +42,7 @@ CURRENT_SPEED = 0               # [-] Current speed for testing
 
 # ########################## SERIAL SETUP ##########################
 # Replace '/dev/ttyUSB0' with the appropriate serial port for your Raspberry Pi
-ser = serial.Serial('/dev/ttyAMA0', HOVER_SERIAL_BAUD, timeout=0.1)
+ser = serial.Serial('/dev/ttyAMA10', HOVER_SERIAL_BAUD, timeout=0.1)
 # ########################## STRUCTS ##########################
 SerialCommand = struct.Struct('<HhhH')  # Start, Steer, Speed, Checksum
 # Start, Cmd1, Cmd2, SpeedR, SpeedL, WheelR, WheelL, BatVoltage, BoardTemp, CmdLed, Checksum

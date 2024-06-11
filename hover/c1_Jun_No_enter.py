@@ -16,7 +16,7 @@ CURRENT_SPEED = 0               # [-] Current speed for testing
 
 # ########################## SERIAL SETUP ##########################
 # Replace '/dev/ttyUSB0' with the appropriate serial port for your Raspberry Pi
-ser = serial.Serial('/dev/ttyAMA0', HOVER_SERIAL_BAUD, timeout=0.1)
+ser = serial.Serial('/dev/ttyAMA10', HOVER_SERIAL_BAUD, timeout=0.1)
 
 # ########################## STRUCTS ##########################
 SerialCommand = struct.Struct('<HhhH')  # Start, Steer, Speed, Checksum
@@ -33,7 +33,7 @@ def Send(uSteer, uSpeed):
     checksum = ctypes.c_uint16(START ^ STEER ^ SPEED).value
     # Write to Serial
     ser.write(SerialCommand.pack(START, STEER, SPEED, checksum))
-
+    
 # ########################## RECEIVE ##########################
 def Receive():
     # Read data from the serial port
@@ -56,7 +56,8 @@ import threading
 speed = 0
 steer = 0
 jump = 25
-
+MAXSPEED = 100
+MAXSTEER = 100
 def getInput(key):
     global speed, steer
 
@@ -73,7 +74,17 @@ def getInput(key):
     elif key == KeyCode.from_char('d'):
         if speed != 0: # Steering should not happend when the speed = 0
             steer += jump
-            
+    
+    if (abs(speed) > MAXSPEED):
+        if speed >= 0:
+            speed = MAXSPEED
+        else: 
+            speed = -MAXSPEED
+    if (abs(steer) > MAXSPEED):
+        if steer >= 0:
+            steer = MAXSTEER
+        else:
+            steer = -MAXSPEED
     print(f"Steer:{steer}, Speed:{speed}")
 
 def on_press(key):
@@ -81,9 +92,11 @@ def on_press(key):
     print('{0} pressed'.format(key))
 
 def on_release(key):
-    # print('{0} release'.format(key))
+    global speed, steer
     if key == Key.esc:
         # Stop listener 
+        speer = 0
+        steer = 0
         print("Stop")
         return False
     
