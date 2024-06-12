@@ -25,7 +25,7 @@ SerialFeedback = struct.Struct('<HhhhhhhhhHH')
 
 
 
-# ########################## SEND ##########################sAS
+# ########################## SEND ##########################
 def Send(uSteer, uSpeed):
     global steer
     START = ctypes.c_uint16(START_FRAME).value
@@ -33,10 +33,10 @@ def Send(uSteer, uSpeed):
     SPEED = uSpeed
     checksum = ctypes.c_uint16(START ^ STEER ^ SPEED).value
     print(START, STEER, SPEED, checksum)
-    try:
-        print(SerialCommand.pack(START, STEER, SPEED, checksum))
-    except Exception as e:
-        print(e)
+    # try:
+    #     print(SerialCommand.pack(START, STEER, SPEED, checksum))
+    # except Exception as e:
+    #     print(e)
     ser.write(SerialCommand.pack(START, STEER, SPEED, checksum))
 
 # ########################## RECEIVE ##########################
@@ -60,7 +60,7 @@ def Receive():
 if __name__ == "__main__":
     while True:
         try:
-            Send(0, 100)
+            Send(0, 50)
             time.sleep(TIME_SEND)
         except:
             break
