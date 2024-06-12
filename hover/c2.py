@@ -2,7 +2,7 @@ import serial
 import struct
 import time
 import ctypes
-
+import wiringpi
 
 # ########################## DEFINES ##########################
 # [-] Baud rate for HoverSerial (used to communicate with the hoverboard)
@@ -16,7 +16,9 @@ CURRENT_SPEED = 0               # [-] Current speed for testing
 
 # ########################## SERIAL SETUP ##########################
 # Replace '/dev/ttyUSB0' with the appropriate serial port for your Raspberry Pi
-ser = serial.Serial('/dev/ttyAMA10', HOVER_SERIAL_BAUD, timeout=0.1)
+# ser = serial.Serial('/dev/ttyAMA0', HOVER_SERIAL_BAUD, timeout=0.1)
+wiringpi.wiringPiSetup()
+serial = wiringpi.serialOpen('/dev/ttyAMA0',HOVER_SERIAL_BAUD)
 
 # ########################## STRUCTS ##########################
 SerialCommand = struct.Struct('<HhhH')  # Start, Steer, Speed, Checksum
@@ -37,7 +39,8 @@ def Send(uSteer, uSpeed):
     #     print(SerialCommand.pack(START, STEER, SPEED, checksum))
     # except Exception as e:
     #     print(e)
-    ser.write(SerialCommand.pack(START, STEER, SPEED, checksum))
+    # ser.write(SerialCommand.pack(START, STEER, SPEED, checksum))
+    wiringpi.serialPuts(serial,SerialCommand.pack(START, STEER, SPEED, checksum))
 
 # ########################## RECEIVE ##########################
 def Receive():
